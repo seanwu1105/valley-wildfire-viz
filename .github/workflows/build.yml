@@ -3,6 +3,9 @@ on: [push, pull_request]
 
 jobs:
   test:
+    defaults:
+      run:
+        shell: bash
     strategy:
       fail-fast: false
       matrix:
