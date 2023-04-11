@@ -1,0 +1,14 @@
+[tool.poetry]
+name = "valley-wildfire-viz"
+version = "0.1.0"
+description = "CS530 Introduction to Scientific Visualization final project @Purdue."
+authors = ["Po-Jen Hsu <hsu248@purdue.edu>", "Shuang Wu <seanwu1105@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "~3.11"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
