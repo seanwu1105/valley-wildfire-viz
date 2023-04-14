@@ -5,8 +5,8 @@ import urllib.request
 
 # Download dataset from https://www.lanl.gov/projects/sciviscontest2022/
 
-URL_BASE = "https://wifire-data.sdsc.edu/data/SciVis2022/valley_losAlamos/"
-FILENAME_BASE = "valley_losAlamos.output."
+URL_BASE = "https://oceans11.lanl.gov/firetec/valley_losAlamos/"
+FILENAME_BASE = "output."
 FILENAME_EXT = ".vts"
 FILE_IDS = range(1000, 75000, 1000)
 
