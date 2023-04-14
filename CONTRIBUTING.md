@@ -39,3 +39,10 @@ poetry shell
 ```sh
 poetry run pytest
 ```
+
+## Caveats
+
+If you found `Could not load the qt platform plugin "xcb" in "" even though it`
+error, see
+[this](https://askubuntu.com/questions/1271976/could-not-load-the-qt-platform-plugin-xcb-in-even-though-it-was-found)
+for details.
