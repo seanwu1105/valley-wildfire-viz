@@ -3,10 +3,29 @@ import sys
 from PySide6.QtWidgets import QApplication, QGridLayout, QMainWindow, QWidget
 from vtkmodules.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 from vtkmodules.vtkCommonColor import vtkNamedColors
-from vtkmodules.vtkCommonDataModel import vtkDataObject
-from vtkmodules.vtkFiltersCore import vtkContourFilter
+from vtkmodules.vtkCommonDataModel import (
+    vtkDataObject,
+    vtkPiecewiseFunction,
+    vtkPlanes,
+    vtkPointData,
+    vtkStructuredGrid,
+)
+from vtkmodules.vtkCommonExecutionModel import vtkAlgorithmOutput
+from vtkmodules.vtkFiltersCore import vtkClipPolyData, vtkContourFilter
 from vtkmodules.vtkIOXML import vtkXMLStructuredGridReader
-from vtkmodules.vtkRenderingCore import vtkActor, vtkDataSetMapper, vtkRenderer
+from vtkmodules.vtkRenderingCore import (
+    vtkActor,
+    vtkColorTransferFunction,
+    vtkDataSetMapper,
+    vtkRenderer,
+    vtkVolume,
+    vtkVolumeProperty,
+)
+from vtkmodules.vtkRenderingVolume import (
+    vtkFixedPointVolumeRayCastMapper,
+    vtkGPUVolumeRayCastMapper,
+)
+from vtkmodules.vtkRenderingVolumeOpenGL2 import vtkSmartVolumeMapper
 
 from src.data import DATA_DIR, to_filename
 from src.temporal import build_temporal_gui
@@ -60,18 +79,42 @@ reader.SetPointArrayStatus("rhof_1", 1)
 reader.SetPointArrayStatus("convht_1", 0)
 reader.SetPointArrayStatus("frhosiesrad_1", 0)
 
-# reader.Update()
-# output: vtkStructuredGrid = reader.GetOutput()  # type: ignore
-# point_data: vtkPointData = output.GetPointData()  # type: ignore
-# print(point_data.SetActiveScalars("rhof_1"))  # type: ignore
+reader.Update()
+output: vtkStructuredGrid = reader.GetOutput()  # type: ignore
+point_data: vtkPointData = output.GetPointData()  # type: ignore
+point_data.SetActiveScalars("rhof_1")
+
+reader.Update()
+print(reader.GetOutput())  # type: ignore
+
+
+# mapper = vtkSmartVolumeMapper()
+# mapper.SetInputConnection(reader.GetOutputPort())
+# mapper.SetInputArrayToProcess(0, 0, 0, vtkDataObject.FIELD_ASSOCIATION_POINTS, "rhof_1")
+
+# mapper.Update()
+
+
+# ctf = vtkColorTransferFunction()
+# ctf.AddRGBPoint(0.0, 97 / 255, 255 / 255, 136 / 255)
+# ctf.AddRGBPoint(1.0, 0 / 255, 102 / 255, 0 / 255)
+
+# volume_property = vtkVolumeProperty()
+# volume_property.ShadeOn()
+# volume_property.SetInterpolationTypeToLinear()
+# volume_property.SetColor(ctf)
+
+# volume = vtkVolume()
+# volume.SetMapper(mapper)
+# volume.SetProperty(volume_property)
 
 contour = vtkContourFilter()
 contour.SetInputConnection(reader.GetOutputPort())
 contour.Update()
-print(contour.GetInput())
-contour.SetInputArrayToProcess(
-    0, 0, 0, vtkDataObject.FIELD_ASSOCIATION_POINTS, "rhof_1"
-)
+print(contour.GetInput())  # type: ignore
+# contour.SetInputArrayToProcess(
+#     0, 0, 0, vtkDataObject.FIELD_ASSOCIATION_POINTS, "rhof_1"
+# )
 contour.SetValue(0, 0.5)
 
 mapper = vtkDataSetMapper()
@@ -82,6 +125,7 @@ actor.SetMapper(mapper)
 
 renderer = vtkRenderer()
 renderer.AddActor(actor)
+# renderer.AddVolume(volume)
 colors = vtkNamedColors()
 renderer.SetBackground(colors.GetColor3d("SlateGray"))  # type: ignore
 
