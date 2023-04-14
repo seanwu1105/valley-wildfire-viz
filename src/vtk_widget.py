@@ -1,10 +1,13 @@
 from PySide6.QtWidgets import QWidget
 from vtkmodules.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 from vtkmodules.vtkCommonColor import vtkNamedColors
+from vtkmodules.vtkCommonDataModel import vtkDataSetAttributes
+from vtkmodules.vtkFiltersCore import vtkAssignAttribute
 from vtkmodules.vtkIOXML import vtkXMLStructuredGridReader
-from vtkmodules.vtkRenderingCore import vtkActor, vtkDataSetMapper, vtkRenderer
+from vtkmodules.vtkRenderingCore import vtkRenderer
 
 from src.data import DATA_DIR, to_filename
+from src.vegetation import build_vegetation_volume
 
 
 def build_vtk_widget(parent: QWidget, init_time: int = 1000):
@@ -22,14 +25,12 @@ def build_vtk_widget(parent: QWidget, init_time: int = 1000):
     reader.SetPointArrayStatus("convht_1", 0)
     reader.SetPointArrayStatus("frhosiesrad_1", 0)
 
-    mapper = vtkDataSetMapper()
-    mapper.SetInputConnection(reader.GetOutputPort())
-
-    actor = vtkActor()
-    actor.SetMapper(mapper)
+    aa = vtkAssignAttribute()
+    aa.SetInputConnection(reader.GetOutputPort())
+    aa.Assign("rhof_1", vtkDataSetAttributes.SCALARS, vtkAssignAttribute.POINT_DATA)
 
     renderer = vtkRenderer()
-    renderer.AddActor(actor)
+    renderer.AddVolume(build_vegetation_volume(reader.GetOutputPort()))
     colors = vtkNamedColors()
     renderer.SetBackground(colors.GetColor3d("SlateGray"))  # type: ignore
 
