@@ -1,22 +1,17 @@
 import concurrent.futures
-import pathlib
 import shutil
 import urllib.request
+
+from src.data import DATA_DIR, FILENAMES
 
 # Download dataset from https://www.lanl.gov/projects/sciviscontest2022/
 
 URL_BASE = "https://oceans11.lanl.gov/firetec/valley_losAlamos/"
-FILENAME_BASE = "output."
-FILENAME_EXT = ".vts"
-EXCLUDED_IDS = (42000,)
-FILE_IDS = filter(lambda id: id not in EXCLUDED_IDS, range(1000, 75000, 1000))
-
-DATA_DIR = pathlib.Path(__file__).parent.resolve() / "data"
 
 
-def download_file(file_id: int):
-    url = f"{URL_BASE}{FILENAME_BASE}{file_id}{FILENAME_EXT}"
-    file_path = DATA_DIR / f"{FILENAME_BASE}{file_id}{FILENAME_EXT}"
+def download_file(filename: str):
+    url = f"{URL_BASE}{filename}"
+    file_path = DATA_DIR / filename
 
     if file_path.exists():
         print(f"Skipping {file_path}...")
@@ -30,4 +25,4 @@ def download_file(file_id: int):
 
 
 with concurrent.futures.ThreadPoolExecutor(max_workers=8) as executor:
-    executor.map(download_file, FILE_IDS)
+    executor.map(download_file, FILENAMES)
