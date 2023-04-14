@@ -46,9 +46,9 @@ jobs:
       - name: Install dependencies
         run: poetry install --no-interaction --no-root
 
-      - name: Lint
+      - name: Lint # Disable import-error and no-name-in-module for unknown reasons failing on GitHub Actions. This is caused by PySide6.QWidgets module.
         run: |
-          poetry run pylint **/*.py --errors-only
+          poetry run pylint **/*.py --errors-only --disable=import-error,no-name-in-module
           poetry run black **/*.py --check
 
       - uses: jakebailey/pyright-action@v1
