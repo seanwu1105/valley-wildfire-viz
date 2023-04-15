@@ -6,7 +6,7 @@ from vtkmodules.vtkCommonColor import vtkNamedColors
 from vtkmodules.vtkIOXML import vtkXMLStructuredGridReader
 from vtkmodules.vtkRenderingCore import vtkRenderer
 
-from src.data import DATA_DIR, FILE_ID_MIN, to_filename
+from src.data import EXTRACTED_DIR, FILE_ID_MIN, to_filename
 from src.temporal import build_temporal_gui
 from src.vegetation import get_vegetation_actor
 from src.vtk_side_effects import import_for_rendering_core, import_for_rendering_volume
@@ -35,26 +35,15 @@ layout.addWidget(temporal_spinbox, 0, 1, 1, -1)
 ######## VTK Widget
 
 reader = vtkXMLStructuredGridReader()
-reader.SetFileName(str(DATA_DIR / to_filename(FILE_ID_MIN)))
+reader.SetFileName(str(EXTRACTED_DIR / to_filename(FILE_ID_MIN)))
 
 
 def on_time_changed(value: str):
-    reader.SetFileName(str(DATA_DIR / to_filename(int(value))))
+    reader.SetFileName(str(EXTRACTED_DIR / to_filename(int(value))))
     vtk_widget.GetRenderWindow().Render()
 
 
 temporal_spinbox.textChanged.connect(on_time_changed)
-
-# Disable the arrays we don't need to save memory.
-reader.SetPointArrayStatus("u", 0)
-reader.SetPointArrayStatus("v", 0)
-reader.SetPointArrayStatus("w", 0)
-reader.SetPointArrayStatus("theta", 0)
-reader.SetPointArrayStatus("O2", 0)
-reader.SetPointArrayStatus("rhowatervapor", 0)
-reader.SetPointArrayStatus("rhof_1", 1)
-reader.SetPointArrayStatus("convht_1", 0)
-reader.SetPointArrayStatus("frhosiesrad_1", 0)
 
 renderer = vtkRenderer()
 renderer.AddActor(get_vegetation_actor(reader.GetOutputPort()))
