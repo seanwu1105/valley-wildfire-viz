@@ -1,6 +1,8 @@
 import pathlib
 
 DATA_DIR = pathlib.Path(__file__).parent.parent.resolve() / "data"
+ORIGINAL_DIR = DATA_DIR / "original"
+EXTRACTED_DIR = DATA_DIR / "extracted"
 
 EXCLUDED_IDS = (42000,)
 FILE_ID_MIN = 1000

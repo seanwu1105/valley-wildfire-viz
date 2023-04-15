@@ -2,7 +2,7 @@ import concurrent.futures
 import shutil
 import urllib.request
 
-from src.data import DATA_DIR, FILENAMES
+from src.data import FILENAMES, ORIGINAL_DIR
 
 # Download dataset from https://www.lanl.gov/projects/sciviscontest2022/
 
@@ -11,7 +11,7 @@ URL_BASE = "https://oceans11.lanl.gov/firetec/valley_losAlamos/"
 
 def download_file(filename: str):
     url = f"{URL_BASE}{filename}"
-    file_path = DATA_DIR / filename
+    file_path = ORIGINAL_DIR / filename
 
     if file_path.exists():
         print(f"Skipping {file_path}...")
