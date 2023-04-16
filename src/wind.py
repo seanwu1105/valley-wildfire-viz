@@ -13,6 +13,7 @@ from vtkmodules.vtkRenderingCore import (
 )
 
 from src.color_scales import BLACK_BLUE_WHITE
+from src.window import WINDOW_WIDTH
 
 
 def get_wind_stream_actor(port: vtkAlgorithmOutput):
@@ -50,6 +51,7 @@ def get_wind_stream_actor(port: vtkAlgorithmOutput):
     mapper.SetLookupTable(lut)
 
     scalar_bar = vtkScalarBarActor()
+    scalar_bar.SetMaximumWidthInPixels(WINDOW_WIDTH // 10)
     scalar_bar.SetLookupTable(mapper.GetLookupTable())  # type: ignore
 
     actor = vtkActor()
