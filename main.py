@@ -12,6 +12,7 @@ from src.vegetation import get_vegetation_actor
 from src.vtk_side_effects import import_for_rendering_core, import_for_rendering_volume
 from src.wind import get_wind_stream_actor
 from src.window import WINDOW_HEIGHT, WINDOW_WIDTH
+from src.fire import add_flame_actor, add_smoke_actor
 
 import_for_rendering_core()
 import_for_rendering_volume()
@@ -38,7 +39,6 @@ layout.addWidget(temporal_spinbox, 0, 1, 1, -1)
 reader = vtkXMLStructuredGridReader()
 reader.SetFileName(str(EXTRACTED_DIR / to_filename(FILE_ID_MIN)))
 
-
 def on_time_changed(value: str):
     reader.SetFileName(str(EXTRACTED_DIR / to_filename(int(value))))
     vtk_widget.GetRenderWindow().Render()
@@ -49,6 +49,9 @@ temporal_spinbox.textChanged.connect(on_time_changed)
 renderer = vtkRenderer()
 renderer.AddActor(get_vegetation_actor(reader.GetOutputPort()))
 renderer.AddActor(get_wind_stream_actor(reader.GetOutputPort()))
+add_flame_actor(reader.GetOutputPort(), renderer)
+add_smoke_actor(reader.GetOutputPort(), renderer)
+
 colors = vtkNamedColors()
 renderer.SetBackground(colors.GetColor3d("SlateGray"))  # type: ignore
 
