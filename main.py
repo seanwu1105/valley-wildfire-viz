@@ -49,7 +49,9 @@ temporal_spinbox.textChanged.connect(on_time_changed)
 
 renderer = vtkRenderer()
 renderer.AddActor(get_vegetation_actor(reader.GetOutputPort()))
-renderer.AddActor(get_wind_stream_actor(reader.GetOutputPort()))
+wind_actor, wind_scalar_bar = get_wind_stream_actor(reader.GetOutputPort())
+renderer.AddActor(wind_actor)
+renderer.AddActor2D(wind_scalar_bar)
 add_flame_actor(reader.GetOutputPort(), renderer)
 add_smoke_actor(reader.GetOutputPort(), renderer)
 

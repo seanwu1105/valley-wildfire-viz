@@ -22,7 +22,7 @@ def extract(filename: str):
     reader.SetPointArrayStatus("v", 1)
     reader.SetPointArrayStatus("w", 1)
     reader.SetPointArrayStatus("theta", 1)
-    reader.SetPointArrayStatus("O2", 0)
+    reader.SetPointArrayStatus("O2", 1)
     reader.SetPointArrayStatus("rhowatervapor", 0)
     reader.SetPointArrayStatus("rhof_1", 1)
     reader.SetPointArrayStatus("convht_1", 0)
