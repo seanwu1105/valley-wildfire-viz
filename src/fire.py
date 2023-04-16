@@ -1,9 +1,18 @@
 from vtkmodules.vtkFiltersCore import vtkContourFilter
 from vtkmodules.vtkCommonCore import vtkLookupTable
 from vtkmodules.vtkRenderingCore import vtkDataSetMapper, vtkActor
+from vtkmodules.vtkCommonExecutionModel import vtkAlgorithmOutput
+from vtkmodules.vtkRenderingCore import vtkRenderer
 
 
-def create_layer(port, isovalue, r, g, b, alpha):
+def create_layer(
+    port: vtkAlgorithmOutput,
+    isovalue: float,
+    r: float,
+    g: float,
+    b: float,
+    alpha: float,
+):
     contours = vtkContourFilter()
     contours.SetInputConnection(port)
     contours.SetValue(0, isovalue)
@@ -24,7 +33,7 @@ def create_layer(port, isovalue, r, g, b, alpha):
     return actor
 
 
-def add_flame_actor(port, renderer):
+def add_flame_actor(port: vtkAlgorithmOutput, renderer: vtkRenderer):
     isosurfaces = [
         [400, 0.45, 0.0, 0.0, 0.5],
         [500, 0.90, 0.0, 0.0, 0.6],
@@ -38,7 +47,7 @@ def add_flame_actor(port, renderer):
         renderer.AddActor(actor)
 
 
-def add_smoke_actor(port, renderer):
+def add_smoke_actor(port: vtkAlgorithmOutput, renderer: vtkRenderer):
     isosurfaces = [
         [310, 0.96, 0.96, 0.96, 0.3],
     ]
