@@ -39,6 +39,7 @@ layout.addWidget(temporal_spinbox, 0, 1, 1, -1)
 reader = vtkXMLStructuredGridReader()
 reader.SetFileName(str(EXTRACTED_DIR / to_filename(FILE_ID_MIN)))
 
+
 def on_time_changed(value: str):
     reader.SetFileName(str(EXTRACTED_DIR / to_filename(int(value))))
     vtk_widget.GetRenderWindow().Render()
