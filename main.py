@@ -10,6 +10,7 @@ from src.data import EXTRACTED_DIR, FILE_ID_MIN, to_filename
 from src.temporal import build_temporal_gui
 from src.vegetation import get_vegetation_actor
 from src.vtk_side_effects import import_for_rendering_core, import_for_rendering_volume
+from src.wind import get_wind_stream_actor
 from src.window import WINDOW_HEIGHT, WINDOW_WIDTH
 
 import_for_rendering_core()
@@ -47,6 +48,7 @@ temporal_spinbox.textChanged.connect(on_time_changed)
 
 renderer = vtkRenderer()
 renderer.AddActor(get_vegetation_actor(reader.GetOutputPort()))
+renderer.AddActor(get_wind_stream_actor(reader.GetOutputPort()))
 colors = vtkNamedColors()
 renderer.SetBackground(colors.GetColor3d("SlateGray"))  # type: ignore
 
