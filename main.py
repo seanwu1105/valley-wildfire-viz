@@ -7,12 +7,12 @@ from vtkmodules.vtkIOXML import vtkXMLStructuredGridReader
 from vtkmodules.vtkRenderingCore import vtkRenderer
 
 from src.data import EXTRACTED_DIR, FILE_ID_MIN, to_filename
+from src.fire import add_flame_actor, add_smoke_actor
 from src.temporal import build_temporal_gui
 from src.vegetation import get_vegetation_actor
 from src.vtk_side_effects import import_for_rendering_core, import_for_rendering_volume
 from src.wind import get_wind_stream_actor
 from src.window import WINDOW_HEIGHT, WINDOW_WIDTH
-from src.fire import add_flame_actor, add_smoke_actor
 
 import_for_rendering_core()
 import_for_rendering_volume()

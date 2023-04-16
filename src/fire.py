@@ -1,10 +1,10 @@
-from vtkmodules.vtkFiltersCore import vtkContourFilter
 from vtkmodules.vtkCommonCore import vtkLookupTable
-from vtkmodules.vtkRenderingCore import vtkDataSetMapper, vtkActor
 from vtkmodules.vtkCommonExecutionModel import vtkAlgorithmOutput
-from vtkmodules.vtkRenderingCore import vtkRenderer
+from vtkmodules.vtkFiltersCore import vtkContourFilter
+from vtkmodules.vtkRenderingCore import vtkActor, vtkDataSetMapper, vtkRenderer
 
 
+# pylint: disable=too-many-arguments
 def create_layer(
     port: vtkAlgorithmOutput,
     isovalue: float,
