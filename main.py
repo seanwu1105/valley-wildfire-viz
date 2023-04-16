@@ -7,7 +7,7 @@ from vtkmodules.vtkIOXML import vtkXMLStructuredGridReader
 from vtkmodules.vtkRenderingCore import vtkRenderer
 
 from src.data import EXTRACTED_DIR, FILE_ID_MIN, to_filename
-from src.fire import add_flame_actor, add_smoke_actor
+from src.fire import get_flame_volume
 from src.temporal import build_temporal_gui
 from src.vegetation import get_vegetation_actor
 from src.vtk_side_effects import import_for_rendering_core, import_for_rendering_volume
@@ -52,8 +52,7 @@ renderer.AddActor(get_vegetation_actor(reader.GetOutputPort()))
 wind_actor, wind_scalar_bar = get_wind_stream_actor(reader.GetOutputPort())
 renderer.AddActor(wind_actor)
 renderer.AddActor2D(wind_scalar_bar)
-add_flame_actor(reader.GetOutputPort(), renderer)
-add_smoke_actor(reader.GetOutputPort(), renderer)
+renderer.AddVolume(get_flame_volume(reader.GetOutputPort()))
 
 colors = vtkNamedColors()
 renderer.SetBackground(colors.GetColor3d("SlateGray"))  # type: ignore
