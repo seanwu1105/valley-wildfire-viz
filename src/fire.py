@@ -16,16 +16,12 @@ from vtkmodules.vtkRenderingVolume import vtkGPUVolumeRayCastMapper
 
 # pylint: disable=too-many-arguments
 def create_image_data(data: vtkStructuredGrid):
-    bounds = data.GetBounds()
-    bounds = [round(x) for x in bounds]
-    dimensions = bounds[1::2]
+    bounds = [round(x) for x in data.GetBounds()]
     spacing = (1.0, 1.0, 1.0)
-    origin = bounds[0::2]
 
     image_data = vtkImageData()
-    image_data.SetDimensions(dimensions)
+    image_data.SetExtent(bounds)
     image_data.SetSpacing(spacing)
-    image_data.SetOrigin(origin)
 
     return image_data
 
@@ -54,9 +50,9 @@ def add_fire_volume(reader: vtkXMLStructuredGridReader):
 
     opacityTransferFunction.AddPoint(400 - 1, 0)
     opacityTransferFunction.AddPoint(400, 0.5)
-    opacityTransferFunction.AddPoint(400, 0.6)
-    opacityTransferFunction.AddPoint(400, 0.7)
-    opacityTransferFunction.AddPoint(400, 0.8)
+    opacityTransferFunction.AddPoint(500, 0.6)
+    opacityTransferFunction.AddPoint(600, 0.7)
+    opacityTransferFunction.AddPoint(700, 0.8)
     opacityTransferFunction.AddPoint(800, 0.9)
     opacityTransferFunction.AddPoint(800 + 1, 0)
 
