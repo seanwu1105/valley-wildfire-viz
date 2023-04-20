@@ -3,11 +3,11 @@ import sys
 from PySide6.QtWidgets import QApplication, QGridLayout, QMainWindow, QWidget
 from vtkmodules.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 from vtkmodules.vtkCommonColor import vtkNamedColors
-from vtkmodules.vtkIOXML import vtkXMLStructuredGridReader
+from vtkmodules.vtkIOXML import vtkXMLImageDataReader, vtkXMLStructuredGridReader
 from vtkmodules.vtkRenderingCore import vtkRenderer
 
-from src.data import EXTRACTED_DIR, FILE_ID_MIN, to_filename
-from src.fire import add_flame_actor, add_smoke_actor
+from src.data import EXTRACTED_DIR, FILE_ID_MIN, IMAGE_DATA_DIR, to_filename
+from src.fire import add_fire_volume
 from src.temporal import build_temporal_gui
 from src.vegetation import get_vegetation_actor
 from src.vtk_side_effects import import_for_rendering_core, import_for_rendering_volume
@@ -36,24 +36,33 @@ layout.addWidget(temporal_spinbox, 0, 1, 1, -1)
 
 ######## VTK Widget
 
-reader = vtkXMLStructuredGridReader()
-reader.SetFileName(str(EXTRACTED_DIR / to_filename(FILE_ID_MIN)))
+vts_reader = vtkXMLStructuredGridReader()
+vts_reader.SetFileName(str(EXTRACTED_DIR / to_filename(FILE_ID_MIN, extension="vts")))
+
+vti_reader = vtkXMLImageDataReader()
+vti_reader.SetFileName(str(IMAGE_DATA_DIR / to_filename(FILE_ID_MIN, extension="vti")))
 
 
 def on_time_changed(value: str):
-    reader.SetFileName(str(EXTRACTED_DIR / to_filename(int(value))))
+    vts_reader.SetFileName(
+        str(EXTRACTED_DIR / to_filename(int(value), extension="vts"))
+    )
+
+    vti_reader.SetFileName(
+        str(IMAGE_DATA_DIR / to_filename(int(value), extension="vti"))
+    )
+
     vtk_widget.GetRenderWindow().Render()
 
 
 temporal_spinbox.textChanged.connect(on_time_changed)
 
 renderer = vtkRenderer()
-renderer.AddActor(get_vegetation_actor(reader.GetOutputPort()))
-wind_actor, wind_scalar_bar = get_wind_stream_actor(reader.GetOutputPort())
+renderer.AddActor(get_vegetation_actor(vts_reader.GetOutputPort()))
+wind_actor, wind_scalar_bar = get_wind_stream_actor(vts_reader.GetOutputPort())
 renderer.AddActor(wind_actor)
 renderer.AddActor2D(wind_scalar_bar)
-add_flame_actor(reader.GetOutputPort(), renderer)
-add_smoke_actor(reader.GetOutputPort(), renderer)
+renderer.AddVolume(add_fire_volume(vti_reader.GetOutputPort()))
 
 colors = vtkNamedColors()
 renderer.SetBackground(colors.GetColor3d("SlateGray"))  # type: ignore

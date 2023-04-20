@@ -2,14 +2,19 @@ import concurrent.futures
 import shutil
 import urllib.request
 
-from src.data import FILENAMES, ORIGINAL_DIR
+from vtkmodules.vtkIOXML import vtkXMLStructuredGridWriter
+
+from src.data import FILE_IDS, ORIGINAL_DIR, to_filename
 
 # Download dataset from https://www.lanl.gov/projects/sciviscontest2022/
 
 URL_BASE = "https://oceans11.lanl.gov/firetec/valley_losAlamos/"
 
 
-def download_file(filename: str):
+def download_file(file_id: int):
+    writer = vtkXMLStructuredGridWriter()
+    filename = to_filename(file_id, writer.GetDefaultFileExtension())
+
     url = f"{URL_BASE}{filename}"
     file_path = ORIGINAL_DIR / filename
 
@@ -24,5 +29,10 @@ def download_file(filename: str):
     print(f"Downloaded {file_path}.")
 
 
-with concurrent.futures.ThreadPoolExecutor(max_workers=8) as executor:
-    executor.map(download_file, FILENAMES)
+def main():
+    with concurrent.futures.ThreadPoolExecutor(max_workers=8) as executor:
+        executor.map(download_file, FILE_IDS)
+
+
+if __name__ == "__main__":
+    main()
