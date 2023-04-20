@@ -1,13 +1,21 @@
 import sys
 
-from PySide6.QtWidgets import QApplication, QGridLayout, QMainWindow, QWidget
+from PySide6.QtWidgets import (
+    QApplication,
+    QCheckBox,
+    QGridLayout,
+    QGroupBox,
+    QHBoxLayout,
+    QMainWindow,
+    QWidget,
+)
 from vtkmodules.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 from vtkmodules.vtkCommonColor import vtkNamedColors
 from vtkmodules.vtkIOXML import vtkXMLImageDataReader, vtkXMLStructuredGridReader
 from vtkmodules.vtkRenderingCore import vtkRenderer
 
 from src.data import EXTRACTED_DIR, FILE_ID_MIN, IMAGE_DATA_DIR, to_filename
-from src.fire import add_fire_volume
+from src.flame import get_flame_actors, get_flame_volume
 from src.temporal import build_temporal_gui
 from src.vegetation import get_vegetation_actor
 from src.vtk_side_effects import import_for_rendering_core, import_for_rendering_volume
@@ -58,11 +66,18 @@ def on_time_changed(value: str):
 temporal_spinbox.textChanged.connect(on_time_changed)
 
 renderer = vtkRenderer()
-renderer.AddActor(get_vegetation_actor(vts_reader.GetOutputPort()))
+vegetation_actor = get_vegetation_actor(vts_reader.GetOutputPort())
+renderer.AddViewProp(vegetation_actor)
 wind_actor, wind_scalar_bar = get_wind_stream_actor(vts_reader.GetOutputPort())
-renderer.AddActor(wind_actor)
-renderer.AddActor2D(wind_scalar_bar)
-renderer.AddVolume(add_fire_volume(vti_reader.GetOutputPort()))
+renderer.AddViewProp(wind_actor)
+renderer.AddViewProp(wind_scalar_bar)
+
+flame_actors = get_flame_actors(vts_reader.GetOutputPort())
+flame_volume = get_flame_volume(vti_reader.GetOutputPort())
+
+for actor in flame_actors:
+    renderer.AddViewProp(actor)
+
 
 colors = vtkNamedColors()
 renderer.SetBackground(colors.GetColor3d("SlateGray"))  # type: ignore
@@ -71,9 +86,64 @@ vtk_widget = QVTKRenderWindowInteractor(central)
 vtk_widget.GetRenderWindow().AddRenderer(renderer)
 vtk_widget.Initialize()
 
-######## VTK Widget End
+layout.addWidget(vtk_widget, 2, 0, 1, -1)
 
-layout.addWidget(vtk_widget, 1, 0, 1, -1)
+######## Layer Control
+
+
+def on_vegetation_layer_changed(state: bool):
+    if state:
+        renderer.AddViewProp(vegetation_actor)
+    else:
+        renderer.RemoveViewProp(vegetation_actor)
+    vtk_widget.GetRenderWindow().Render()
+
+
+def on_wind_layer_changed(state: bool):
+    if state:
+        renderer.AddViewProp(wind_actor)
+        renderer.AddViewProp(wind_scalar_bar)
+    else:
+        renderer.RemoveViewProp(wind_actor)
+        renderer.RemoveViewProp(wind_scalar_bar)
+    vtk_widget.GetRenderWindow().Render()
+
+
+def on_flame_contour_layer_changed(state: bool):
+    if state:
+        for a in flame_actors:
+            renderer.AddViewProp(a)
+    else:
+        for a in flame_actors:
+            renderer.RemoveViewProp(a)
+    vtk_widget.GetRenderWindow().Render()
+
+
+def on_flame_volume_layer_changed(state: bool):
+    if state:
+        renderer.AddVolume(flame_volume)
+    else:
+        renderer.RemoveVolume(flame_volume)
+    vtk_widget.GetRenderWindow().Render()
+
+
+layers_config = (
+    ("Vegetation", True, on_vegetation_layer_changed),
+    ("Wind", True, on_wind_layer_changed),
+    ("Flame (Contour)", True, on_flame_contour_layer_changed),
+    ("Flame (Volume)", False, on_flame_volume_layer_changed),
+)
+
+layer_group_box = QGroupBox("Layers")
+layout.addWidget(layer_group_box, 1, 0, 1, -1)
+layer_group_box_layout = QHBoxLayout()
+layer_group_box.setLayout(layer_group_box_layout)
+
+for layer_name, is_checked, on_state_changed in layers_config:
+    layer_checkbox = QCheckBox(layer_name)
+    layer_checkbox.setChecked(is_checked)
+    layer_checkbox.stateChanged.connect(on_state_changed)
+    layer_group_box_layout.addWidget(layer_checkbox)
 
 central.setLayout(layout)
 window.setCentralWidget(central)
