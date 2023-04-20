@@ -53,6 +53,7 @@ def get_wind_stream_actor(port: vtkAlgorithmOutput):
     scalar_bar = vtkScalarBarActor()
     scalar_bar.SetMaximumWidthInPixels(WINDOW_WIDTH // 10)
     scalar_bar.SetLookupTable(mapper.GetLookupTable())  # type: ignore
+    scalar_bar.SetTitle("O2 Concentration")
 
     actor = vtkActor()
     actor.GetProperty().SetOpacity(0.5)
