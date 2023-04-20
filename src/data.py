@@ -3,6 +3,7 @@ import pathlib
 DATA_DIR = pathlib.Path(__file__).parent.parent.resolve() / "data"
 ORIGINAL_DIR = DATA_DIR / "original"
 EXTRACTED_DIR = DATA_DIR / "extracted"
+IMAGE_DATA_DIR = DATA_DIR / "image_data"
 
 EXCLUDED_IDS = (42000,)
 FILE_ID_MIN = 1000
@@ -14,10 +15,7 @@ FILE_IDS = filter(
 )
 
 
-def to_filename(file_id: int) -> str:
+def to_filename(file_id: int, extension: str) -> str:
     if file_id in EXCLUDED_IDS:
-        return to_filename(file_id + FILE_ID_STEP)
-    return f"output.{file_id}.vts"
-
-
-FILENAMES = [to_filename(file_id) for file_id in FILE_IDS]
+        return to_filename(file_id + FILE_ID_STEP, extension)
+    return f"output.{file_id}.{extension}"
