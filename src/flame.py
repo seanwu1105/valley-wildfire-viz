@@ -59,7 +59,7 @@ def get_flame_volume(port: vtkAlgorithmOutput):
     scalar_bar.SetLookupTable(color_transfer_function)
     scalar_bar.SetTitle("Temperature (K)")
     scalar_bar.SetMaximumWidthInPixels(WINDOW_WIDTH // 10)
-    scalar_bar.SetPosition(0.18, 0.1)
+    scalar_bar.SetPosition(0.2, 0.1)
 
     return volume, scalar_bar
 
@@ -76,7 +76,16 @@ def get_flame_actors(port: vtkAlgorithmOutput):
         [310, 0.96, 0.96, 0.96, 0.3],
     ]
 
-    return (build_contours_actor(port, *param) for param in isosurfaces)
+    color_transfer_function = vtkColorTransferFunction()
+    for isovalue, r, g, b, _ in isosurfaces:
+        color_transfer_function.AddRGBPoint(isovalue, r, g, b)
+    scalar_bar = vtkScalarBarActor()
+    scalar_bar.SetLookupTable(color_transfer_function)
+    scalar_bar.SetTitle("Temperature (K)")
+    scalar_bar.SetMaximumWidthInPixels(WINDOW_WIDTH // 10)
+    scalar_bar.SetPosition(0.05, 0.1)
+
+    return (build_contours_actor(port, *param) for param in isosurfaces), scalar_bar
 
 
 # pylint: disable=too-many-arguments

@@ -72,9 +72,10 @@ wind_actor, wind_scalar_bar = get_wind_stream_actor(vts_reader.GetOutputPort())
 renderer.AddViewProp(wind_actor)
 renderer.AddViewProp(wind_scalar_bar)
 
-flame_actors = get_flame_actors(vts_reader.GetOutputPort())
+flame_actors, flame_scalar_bar = get_flame_actors(vts_reader.GetOutputPort())
 flame_volume, flame_volume_scalar_bar = get_flame_volume(vti_reader.GetOutputPort())
 
+renderer.AddViewProp(flame_scalar_bar)
 for actor in flame_actors:
     renderer.AddViewProp(actor)
 
@@ -86,6 +87,7 @@ vtk_widget.GetRenderWindow().AddRenderer(renderer)
 vtk_widget.Initialize()
 
 layout.addWidget(vtk_widget, 2, 0, 1, -1)
+
 
 ######## Layer Control
 
@@ -110,9 +112,11 @@ def on_wind_layer_changed(state: bool):
 
 def on_flame_contour_layer_changed(state: bool):
     if state:
+        renderer.AddViewProp(flame_scalar_bar)
         for a in flame_actors:
             renderer.AddViewProp(a)
     else:
+        renderer.RemoveViewProp(flame_scalar_bar)
         for a in flame_actors:
             renderer.RemoveViewProp(a)
     vtk_widget.GetRenderWindow().Render()
