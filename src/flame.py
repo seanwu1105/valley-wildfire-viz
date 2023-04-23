@@ -48,8 +48,8 @@ def get_flame_volume(port: vtkAlgorithmOutput):
 
     volume_mapper = vtkGPUVolumeRayCastMapper()
     volume_mapper.SetInputConnection(port)
-    volume_mapper.AutoAdjustSampleDistancesOff()
-    volume_mapper.SetSampleDistance(0.1)
+    # volume_mapper.AutoAdjustSampleDistancesOff()
+    # volume_mapper.SetSampleDistance(0.1)
 
     volume = vtkVolume()
     volume.SetMapper(volume_mapper)
@@ -85,7 +85,10 @@ def get_flame_actors(port: vtkAlgorithmOutput):
     scalar_bar.SetMaximumWidthInPixels(WINDOW_WIDTH // 10)
     scalar_bar.SetPosition(0.05, 0.1)
 
-    return (build_contours_actor(port, *param) for param in isosurfaces), scalar_bar
+    return (
+        tuple(build_contours_actor(port, *param) for param in isosurfaces),
+        scalar_bar,
+    )
 
 
 # pylint: disable=too-many-arguments
