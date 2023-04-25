@@ -101,6 +101,14 @@ colors = vtkNamedColors()
 renderer.SetBackground(colors.GetColor3d("SlateGray"))  # type: ignore
 
 vtk_widget = QVTKRenderWindowInteractor(central)
+
+# Depth Peeling
+vtk_widget.GetRenderWindow().SetAlphaBitPlanes(True)
+vtk_widget.GetRenderWindow().SetMultiSamples(0)
+renderer.SetUseDepthPeeling(True)
+renderer.SetMaximumNumberOfPeels(100)
+renderer.SetOcclusionRatio(0.0)
+
 vtk_widget.GetRenderWindow().AddRenderer(renderer)
 vtk_widget.Initialize()
 
