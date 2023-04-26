@@ -14,11 +14,9 @@ from src.data import (
     IMAGE_DATA_DIR,
     to_filename,
 )
-from src.flame import get_flame_actors  # , get_flame_volume
+from src.flame import get_flame_actors
 from src.vegetation import get_vegetation_actor
 from src.vtk_side_effects import import_for_rendering_core, import_for_rendering_volume
-
-# from src.wind import get_wind_stream_actor
 from src.window import WINDOW_HEIGHT, WINDOW_WIDTH
 
 import_for_rendering_core()
@@ -79,18 +77,8 @@ def main():
     renderer = vtkRenderer()
     vegetation_actor = get_vegetation_actor(vts_reader.GetOutputPort())
     renderer.AddActor(vegetation_actor)
-    # wind_actor, wind_scalar_bar = get_wind_stream_actor(vts_reader.GetOutputPort())
-    # renderer.AddActor(wind_actor)
-    # renderer.AddActor(wind_scalar_bar)
 
     flame_actors, _ = get_flame_actors(vts_reader.GetOutputPort())
-    # (
-    # flame_volume,
-    # _,
-    # update_auto_adjust_sample_distances,
-    # ) = get_flame_volume(vti_reader.GetOutputPort())
-
-    # renderer.AddActor(flame_scalar_bar)
 
     for actor in flame_actors:
         renderer.AddActor(actor)
@@ -102,11 +90,6 @@ def main():
     renderer.SetMaximumNumberOfPeels(100)
     renderer.SetOcclusionRatio(0.0)
 
-    # renderer.GetActiveCamera().SetPosition(-423.45965077898506, 747.431780358385, -479.8084945259253)
-    # renderer.GetActiveCamera().SetFocalPoint(239.0, 360.1801300048828, 59.0)
-    # renderer.GetActiveCamera().SetViewUp(0.6080162809740067, -0.06123356946813224, -0.7915596326498271)
-    # renderer.GetActiveCamera().SetClippingRange(393.18430301265687, 1625.2139188614644)
-
     window = vtkRenderWindow()
     window.AddRenderer(renderer)
     window.SetSize(WINDOW_WIDTH, WINDOW_HEIGHT)
@@ -114,7 +97,7 @@ def main():
     interactor = vtkRenderWindowInteractor()
     interactor.SetRenderWindow(window)
     interactor.AddObserver(
-        "KeyPressEvent",
+        "KeyPressEvent",  # type: ignore
         lambda obj, event: key_pressed_callback(
             obj, event, renderer, window, vts_reader, vti_reader
         ),
