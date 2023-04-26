@@ -28,8 +28,8 @@ def get_flame_volume(port: vtkAlgorithmOutput):
     color_transfer_function.AddRGBPoint(800, 1.00, 1.0, 1.0)
 
     opacity_transfer_function.AddPoint(400 - 1, 0)
-    opacity_transfer_function.AddPoint(400, 0.5)
-    opacity_transfer_function.AddPoint(800, 0.9)
+    opacity_transfer_function.AddPoint(400, 0.1)
+    opacity_transfer_function.AddPoint(800, 0.5)
     opacity_transfer_function.AddPoint(800 + 1, 0)
 
     # smoke
@@ -38,7 +38,7 @@ def get_flame_volume(port: vtkAlgorithmOutput):
     color_transfer_function.AddRGBPoint(310 + 1, 0, 0, 0)
 
     opacity_transfer_function.AddPoint(310 - 1, 0)
-    opacity_transfer_function.AddPoint(310, 0.3)
+    opacity_transfer_function.AddPoint(310, 0.1)
     opacity_transfer_function.AddPoint(310 + 1, 0)
 
     volume_property.SetColor(color_transfer_function)
