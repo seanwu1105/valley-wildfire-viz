@@ -104,7 +104,9 @@ time_spin_box.textChanged.connect(on_time_changed)
 renderer = vtkRenderer()
 vegetation_actor = get_vegetation_actor(vts_reader.GetOutputPort())
 renderer.AddViewProp(vegetation_actor)
-wind_actor, wind_scalar_bar = get_wind_stream_actor(vts_reader.GetOutputPort())
+wind_actor, wind_scalar_bar, set_wind_color_by = get_wind_stream_actor(
+    vts_reader.GetOutputPort()
+)
 renderer.AddViewProp(wind_actor)
 renderer.AddViewProp(wind_scalar_bar)
 
@@ -199,24 +201,44 @@ for layer_name, is_checked, on_state_changed in layers_config:
     layer_group_box_layout.addWidget(layer_checkbox)
 
 
-######## Switch Auto Adjust Sample Distances
+######## Switch Auto Adjust Volume Sample Distances
 
 
-def on_auto_adjust_sample_distances_changed(state: bool):
+def on_auto_adjust_volume_sample_distances_changed(state: bool):
     update_auto_adjust_sample_distances(state)
     vtk_widget.GetRenderWindow().Render()
 
 
-auto_adjust_sample_distances_check_box = QCheckBox("Auto Adjust Sample Distances")
-auto_adjust_sample_distances_check_box.setChecked(True)
-auto_adjust_sample_distances_check_box.stateChanged.connect(
-    on_auto_adjust_sample_distances_changed
+auto_adjust_volume_sample_distances_check_box = QCheckBox(
+    "Auto Adjust Volume Sample Distances"
 )
-volume_settings_group_box = QGroupBox("Volume Settings")
-volume_settings_layout = QHBoxLayout()
-volume_settings_group_box.setLayout(volume_settings_layout)
-volume_settings_layout.addWidget(auto_adjust_sample_distances_check_box)
-layout.addWidget(volume_settings_group_box, 2, 0, 1, -1)
+auto_adjust_volume_sample_distances_check_box.setChecked(True)
+auto_adjust_volume_sample_distances_check_box.stateChanged.connect(
+    on_auto_adjust_volume_sample_distances_changed
+)
+
+######## Wind Color Map
+
+
+def on_wind_color_map_by_o2_changed(state: bool):
+    if state:
+        set_wind_color_by("O2")
+    else:
+        set_wind_color_by("wind")
+    vtk_widget.GetRenderWindow().Render()
+
+
+wind_color_map_by_o2_check_box = QCheckBox("Wind Color Map by O2")
+wind_color_map_by_o2_check_box.setChecked(True)
+wind_color_map_by_o2_check_box.stateChanged.connect(on_wind_color_map_by_o2_changed)
+
+
+settings_group_box = QGroupBox("Settings")
+settings_layout = QHBoxLayout()
+settings_group_box.setLayout(settings_layout)
+settings_layout.addWidget(auto_adjust_volume_sample_distances_check_box)
+settings_layout.addWidget(wind_color_map_by_o2_check_box)
+layout.addWidget(settings_group_box, 2, 0, 1, -1)
 
 central.setLayout(layout)
 window.setCentralWidget(central)
