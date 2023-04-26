@@ -1,3 +1,5 @@
+import typing
+
 from vtkmodules.vtkCommonDataModel import vtkDataSetAttributes
 from vtkmodules.vtkCommonExecutionModel import vtkAlgorithmOutput
 from vtkmodules.vtkCommonTransforms import vtkTransform
@@ -36,27 +38,42 @@ def get_wind_stream_actor(port: vtkAlgorithmOutput):
 
     aa = vtkAssignAttribute()
     aa.SetInputConnection(streamline.GetOutputPort())
-    aa.Assign("O2", vtkDataSetAttributes.SCALARS, vtkAssignAttribute.POINT_DATA)
 
-    lut = vtkColorTransferFunction()
-    lut_range = (0.227, 0.23)
-    num_steps = len(BLACK_BLUE_WHITE)
-    step_size = (lut_range[1] - lut_range[0]) / (num_steps - 1)
-    for i, color in enumerate(BLACK_BLUE_WHITE):
-        lut.AddRGBPoint(lut_range[0] + i * step_size, *color)
+    lut_o2 = get_lut((0.227, 0.23))
+    lut_magnitude = get_lut((0.0, 16))
 
     mapper = vtkDataSetMapper()
     mapper.SetInputConnection(aa.GetOutputPort())
     mapper.UseLookupTableScalarRangeOn()
-    mapper.SetLookupTable(lut)
 
     scalar_bar = vtkScalarBarActor()
     scalar_bar.SetMaximumWidthInPixels(WINDOW_WIDTH // 10)
-    scalar_bar.SetLookupTable(mapper.GetLookupTable())  # type: ignore
-    scalar_bar.SetTitle("O2 Concentration")
+
+    def set_color_by(color_by: typing.Literal["O2", "wind"]):
+        aa.Assign(color_by, vtkDataSetAttributes.SCALARS, vtkAssignAttribute.POINT_DATA)
+        if color_by == "O2":
+            mapper.SetLookupTable(lut_o2)
+            scalar_bar.SetTitle("O2 Concentration")
+        elif color_by == "wind":
+            mapper.SetLookupTable(lut_magnitude)
+            scalar_bar.SetTitle("Wind Magnitude")
+        scalar_bar.SetLookupTable(mapper.GetLookupTable())  # type: ignore
+
+    set_color_by("O2")
 
     actor = vtkActor()
     actor.GetProperty().SetOpacity(0.5)
     actor.SetMapper(mapper)
 
-    return actor, scalar_bar
+    return actor, scalar_bar, set_color_by
+
+
+def get_lut(lut_range: tuple[float, float]):
+    num_steps = len(BLACK_BLUE_WHITE)
+    step_size = (lut_range[1] - lut_range[0]) / (num_steps - 1)
+
+    lut = vtkColorTransferFunction()
+    for i, color in enumerate(BLACK_BLUE_WHITE):
+        lut.AddRGBPoint(lut_range[0] + i * step_size, *color)
+
+    return lut
