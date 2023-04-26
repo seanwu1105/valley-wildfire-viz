@@ -23,6 +23,7 @@ def extract(file_id: int):
         str(ORIGINAL_DIR / to_filename(file_id, writer.GetDefaultFileExtension()))
     )
 
+    # remove unused arrays
     reader.SetPointArrayStatus("u", 1)
     reader.SetPointArrayStatus("v", 1)
     reader.SetPointArrayStatus("w", 1)
@@ -37,12 +38,14 @@ def extract(file_id: int):
     reader_output = typing.cast(vtkStructuredGrid, reader.GetOutput())
     reader_output.GetPointData().SetActiveScalars("theta")
 
+    # extract region of interest & subsample
     extractor = vtkExtractGrid()
     extractor.SetInputData(reader_output)
     extractor.SetVOI(322, 700, 150, 349, 0, 44)
     extractor.SetSampleRate(2, 2, 1)
     extractor.Update()
 
+    # combine u, v, w scalars into wind vector
     calculator = vtkArrayCalculator()
     calculator.SetInputData(typing.cast(vtkStructuredGrid, extractor.GetOutput()))
     calculator.SetAttributeTypeToPointData()
@@ -53,6 +56,7 @@ def extract(file_id: int):
     calculator.SetResultArrayName("wind")
     calculator.Update()
 
+    # remove u, v, w scalars
     calculator_output = typing.cast(vtkStructuredGrid, calculator.GetOutput())
     calculator_output.GetPointData().RemoveArray("u")
     calculator_output.GetPointData().RemoveArray("v")
