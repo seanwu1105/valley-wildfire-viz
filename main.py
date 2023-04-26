@@ -7,7 +7,9 @@ from PySide6.QtWidgets import (
     QGroupBox,
     QHBoxLayout,
     QMainWindow,
+    QPushButton,
     QSpinBox,
+    QStyle,
     QWidget,
 )
 from vtkmodules.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
@@ -24,6 +26,7 @@ from src.data import (
     to_filename,
 )
 from src.flame import get_flame_actors, get_flame_volume
+from src.images import export_image, remove_images
 from src.vegetation import get_vegetation_actor
 from src.vtk_side_effects import import_for_rendering_core, import_for_rendering_volume
 from src.wind import get_wind_stream_actor
@@ -49,9 +52,28 @@ layout.setColumnStretch(1, 1)
 time_spin_box = QSpinBox()
 time_spin_box.setRange(FILE_ID_MIN // FILE_ID_STEP, FILE_ID_MAX // FILE_ID_STEP)
 time_spin_box.setSuffix("000")
-time_group_box = QGroupBox("Time")
+
+
+def start_playback():
+    # This is a blocking playback as we do not want to use multi-processing or asyncio
+    # to complicate things.
+    remove_images()
+
+    while time_spin_box.value() < time_spin_box.maximum():
+        time_spin_box.setValue(time_spin_box.value() + 1)
+        time_spin_box.repaint()
+        export_image(vtk_widget.GetRenderWindow(), f"{time_spin_box.value()}")  # type: ignore
+
+
+play_button = QPushButton()
+play_button.setIcon(app.style().standardIcon(QStyle.StandardPixmap.SP_MediaPlay))
+play_button.clicked.connect(start_playback)
+
 time_group_box_layout = QHBoxLayout()
-time_group_box_layout.addWidget(time_spin_box)
+time_group_box_layout.addWidget(time_spin_box, stretch=1)
+time_group_box_layout.addWidget(play_button)
+
+time_group_box = QGroupBox("Time")
 time_group_box.setLayout(time_group_box_layout)
 
 layout.addWidget(time_group_box, 0, 1, 1, -1)
