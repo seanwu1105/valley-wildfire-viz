@@ -26,10 +26,10 @@ import_for_rendering_volume()
 def print_camera_settings(renderer: vtkRenderer):
     camera = renderer.GetActiveCamera()
     print("Camera settings:")
-    print("  * position:        %s" % (camera.GetPosition(),))
-    print("  * focal point:     %s" % (camera.GetFocalPoint(),))
-    print("  * up vector:       %s" % (camera.GetViewUp(),))
-    print("  * clipping range:  %s" % (camera.GetClippingRange(),))
+    print(f"  * position:        {camera.GetPosition()}")
+    print(f"  * focal point:     {camera.GetFocalPoint()}")
+    print(f"  * up vector:       {camera.GetViewUp()}")
+    print(f"  * clipping range:  {camera.GetClippingRange()}")
 
 
 def play(
@@ -50,7 +50,7 @@ def play(
 
 def key_pressed_callback(
     obj: vtkRenderWindowInteractor,
-    event: str,
+    _: str,
     renderer: vtkRenderer,
     window: vtkRenderWindow,
     vts_reader: vtkXMLStructuredGridReader,
