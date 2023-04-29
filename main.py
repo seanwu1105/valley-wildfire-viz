@@ -3,13 +3,13 @@ import sys
 from PySide6.QtWidgets import (
     QApplication,
     QCheckBox,
-    QGridLayout,
     QGroupBox,
     QHBoxLayout,
     QMainWindow,
     QPushButton,
     QSpinBox,
     QStyle,
+    QVBoxLayout,
     QWidget,
 )
 from vtkmodules.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
@@ -46,8 +46,7 @@ app = QApplication()
 window = QMainWindow()
 window.resize(WINDOW_WIDTH, WINDOW_HEIGHT)
 central = QWidget()
-layout = QGridLayout()
-layout.setColumnStretch(1, 1)
+layout = QVBoxLayout()
 
 time_spin_box = QSpinBox()
 time_spin_box.setRange(FILE_ID_MIN // FILE_ID_STEP, FILE_ID_MAX // FILE_ID_STEP)
@@ -75,8 +74,6 @@ time_group_box_layout.addWidget(play_button)
 
 time_group_box = QGroupBox("Time")
 time_group_box.setLayout(time_group_box_layout)
-
-layout.addWidget(time_group_box, 0, 1, 1, -1)
 
 ######## VTK Widget
 
@@ -136,8 +133,6 @@ renderer.SetOcclusionRatio(0.0)
 vtk_widget.GetRenderWindow().AddRenderer(renderer)
 vtk_widget.Initialize()
 
-layout.addWidget(vtk_widget, 3, 0, 1, -1)
-
 
 ######## Layer Control
 
@@ -190,7 +185,6 @@ layers_config = (
 )
 
 layer_group_box = QGroupBox("Layers")
-layout.addWidget(layer_group_box, 1, 0, 1, -1)
 layer_group_box_layout = QHBoxLayout()
 layer_group_box.setLayout(layer_group_box_layout)
 
@@ -238,7 +232,11 @@ settings_layout = QHBoxLayout()
 settings_group_box.setLayout(settings_layout)
 settings_layout.addWidget(auto_adjust_volume_sample_distances_check_box)
 settings_layout.addWidget(wind_color_map_by_o2_check_box)
-layout.addWidget(settings_group_box, 2, 0, 1, -1)
+
+layout.addWidget(time_group_box)
+layout.addWidget(layer_group_box)
+layout.addWidget(settings_group_box)
+layout.addWidget(vtk_widget)
 
 central.setLayout(layout)
 window.setCentralWidget(central)

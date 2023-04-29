@@ -21,7 +21,7 @@ repos:
         stages: [commit]
 
   - repo: https://github.com/RobertCraigie/pyright-python
-    rev: v1.1.278
+    rev: v1.1.305
     hooks:
       - id: pyright
         stages: [commit]
