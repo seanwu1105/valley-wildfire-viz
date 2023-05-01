@@ -58,6 +58,7 @@ python main.py
 - [Project Proposal](./proposal.pdf)
 - [Project Report](./report.pdf)
 - [Project Slides](./slides.pdf)
+- [App Preview Video](./preview.webm)
 
 ## Contributing
 
