@@ -57,6 +57,7 @@ python main.py
 - [IEEE 2022 SciVis Contest: Vorticity-driven Lateral Spread Ensemble Data Set](https://www.lanl.gov/projects/sciviscontest2022/)
 - [Project Proposal](./proposal.pdf)
 - [Project Report](./report.pdf)
+- [Project Slides](./slides.pdf)
 
 ## Contributing
 
