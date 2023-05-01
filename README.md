@@ -2,9 +2,14 @@
 
 CS530 Introduction to Scientific Visualization final project @Purdue.
 
+![preview](https://github.com/seanwu1105/valley-wildfire-viz/releases/download/data-holder/preview.png)
+
+![animation](https://github.com/seanwu1105/valley-wildfire-viz/releases/download/data-holder/all.gif)
+
 ## Dataset
 
-TODO
+A dataset provided by IEEE 2022 SciVis Contest is selected for the project.
+Follow the instructions below to download the dataset.
 
 ## Getting Started
 
@@ -27,7 +32,31 @@ Activate the virtual environment:
 poetry shell
 ```
 
-## TODO
+After the environment is setup, run the following command to download the
+dataset:
+
+```sh
+python download.py
+```
+
+When the download is complete, run the following command to start the
+preprocessing:
+
+```sh
+python extract.py
+```
+
+Start the application with:
+
+```sh
+python main.py
+```
+
+## References
+
+- [IEEE 2022 SciVis Contest: Vorticity-driven Lateral Spread Ensemble Data Set](https://www.lanl.gov/projects/sciviscontest2022/)
+- [Project Proposal](./proposal.pdf)
+- [Project Report](./report.pdf)
 
 ## Contributing
 

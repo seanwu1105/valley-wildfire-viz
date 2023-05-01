@@ -40,7 +40,7 @@ poetry shell
 poetry run pytest
 ```
 
-## Caveats
+## Notes
 
 If you found `Could not load the qt platform plugin "xcb" in "" even though it`
 error, see
